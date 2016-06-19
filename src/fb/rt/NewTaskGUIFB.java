@@ -185,10 +185,10 @@ public class NewTaskGUIFB extends FBInstance
 
 		jLabel1.setText("Create New Task:");
 
-		jLabel2.setText("Choose arm:");
+		jLabel2.setText("Choose Type:");
 
-		select_arm.setModel(
-				new javax.swing.DefaultComboBoxModel<>(new String[] { "Right Arm", "Left Arm", "Both Arms" }));
+		select_arm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Worker Task",
+				"Robot Task - Right Arm", "Robot Task - Left Arm", "Robot Task - Both Arms" }));
 
 		task_name.setText("");
 
