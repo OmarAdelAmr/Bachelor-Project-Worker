@@ -11,4 +11,10 @@ public class HumanTask extends Task
 		// TODO Auto-generated constructor stub
 	}
 
+	public HumanTask(String name)
+	{
+		super(name);
+		// TODO Auto-generated constructor stub
+	}
+
 }

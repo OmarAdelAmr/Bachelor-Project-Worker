@@ -366,7 +366,7 @@ public class NewTaskGUIFB extends FBInstance
 				if (!old_data_arr[i].matches("\\s*"))
 					writer.println(old_data_arr[i]);
 			}
-			writer.print(new_task_name);
+			writer.print(arm + ": " + new_task_name);
 			writer.close();
 		}
 

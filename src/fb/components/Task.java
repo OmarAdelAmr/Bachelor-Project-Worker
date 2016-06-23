@@ -2,7 +2,7 @@ package fb.components;
 
 import java.util.ArrayList;
 
-public abstract class Task
+public class Task
 {
 	private String name;
 	private ArrayList<Task> dependencies;
@@ -11,6 +11,12 @@ public abstract class Task
 	{
 		this.name = name;
 		this.dependencies = dependencies;
+	}
+
+	public Task(String name)
+	{
+		this.name = name;
+		this.dependencies = null;
 	}
 
 	public String getName()
