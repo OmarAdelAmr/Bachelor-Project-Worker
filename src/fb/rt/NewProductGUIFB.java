@@ -1,8 +1,13 @@
 package fb.rt;
 
+import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -10,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import fb.components.Task;
 
-public class NewProductGUIFB
+public class NewProductGUIFB extends FBInstance
 {
 
 	// Variables declaration - do not modify
@@ -24,6 +29,8 @@ public class NewProductGUIFB
 	private javax.swing.JLabel jLabel_choose_dependencies;
 	private javax.swing.JLabel jLabel_choose_task;
 	private javax.swing.JLabel jLabel_product_name;
+	private javax.swing.JLabel jLabel_task_added_warning;
+	private javax.swing.JLabel jLabel_empty_name_warning;
 	private javax.swing.JPanel jPanel_dependencies_panel;
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JScrollPane jScrollPane3;
@@ -41,17 +48,106 @@ public class NewProductGUIFB
 
 	ArrayList<Task> all_selected_tasks = new ArrayList<Task>();
 
+	/** INPUT EVENTS */
+	public EventServer ie_init_new_product = new EventInput(this);
+	public EventServer ie_delete_step = new EventInput(this);
+	public EventServer ie_add_step = new EventInput(this);
+	public EventServer ie_create_product = new EventInput(this);
+	public EventServer ie_cancel = new EventInput(this);
+	/** END OF INPUT EVENTS */
+
+	/** OUTPUT EVENTS */
+	public EventOutput oe_close_newProduct_window = new EventOutput();
+
+	/** END OF OUTPUT EVENTS */
+
 	public NewProductGUIFB()
+	{
+		super();
+
+		// TODO
+		robot_right_tasks = read_all_tasks("Robot Task - Right Arm");
+		robot_left_tasks = read_all_tasks("Robot Task - Left Arm");
+		robot_both_tasks = read_all_tasks("Robot Task - Both Arms");
+		worker_tasks = read_all_tasks("Worker Task");
+		initComponents();
+
+	}
+
+	/////////////////////// FBDK ////////////////////////////
+	/** LINKING INPUT EVENTS TO THEIR NAMES */
+	public EventServer eiNamed(String s)
+	{
+		if ("ie_init_new_product".equals(s))
+			return ie_init_new_product;
+		if ("ie_delete_step".equals(s))
+			return ie_delete_step;
+		if ("ie_add_step".equals(s))
+			return ie_add_step;
+		if ("ie_create_product".equals(s))
+			return ie_create_product;
+		if ("ie_cancel".equals(s))
+			return ie_cancel;
+		return super.eiNamed(s);
+	}
+
+	/** LINKING OUTPUT EVENTS TO THEIR NAMES */
+	public EventOutput eoNamed(String s)
+	{
+		if ("oe_close_newProduct_window".equals(s))
+			return oe_close_newProduct_window;
+		return super.eoNamed(s);
+	}
+
+	/** Defining the Methods */
+	public void serviceEvent(EventServer e)
+	{
+		if (e == ie_init_new_product)
+			service_ie_init_new_product();
+		else if (e == ie_delete_step)
+			service_ie_delete_step();
+		else if (e == ie_add_step)
+			service_ie_add_step();
+		else if (e == ie_create_product)
+			service_ie_create_product();
+		else if (e == ie_cancel)
+			service_ie_cancel();
+	}
+
+	private void service_ie_init_new_product()
 	{
 		robot_right_tasks = read_all_tasks("Robot Task - Right Arm");
 		robot_left_tasks = read_all_tasks("Robot Task - Left Arm");
 		robot_both_tasks = read_all_tasks("Robot Task - Both Arms");
 		worker_tasks = read_all_tasks("Worker Task");
-		// TODO
 		initComponents();
+	}
+
+	private void service_ie_delete_step()
+	{
+		// TODO Auto-generated method stub
 
 	}
 
+	private void service_ie_add_step()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	private void service_ie_create_product()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	private void service_ie_cancel()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	//////////////////////// GUI ///////////////
 	private void initComponents()
 	{
 
@@ -61,6 +157,7 @@ public class NewProductGUIFB
 		jComboBox1 = new javax.swing.JComboBox<>();
 		jLabel_choose_task = new javax.swing.JLabel();
 		jLabel_choose_dependencies = new javax.swing.JLabel();
+		jLabel_task_added_warning = new javax.swing.JLabel();
 		jButton_add = new javax.swing.JButton();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jTable_choose_from = new javax.swing.JTable();
@@ -70,6 +167,7 @@ public class NewProductGUIFB
 		jButton_close = new javax.swing.JButton();
 		jLabel1 = new javax.swing.JLabel();
 		jButton_create_product = new javax.swing.JButton();
+		jLabel_empty_name_warning = new javax.swing.JLabel();
 
 		newProductFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -153,29 +251,35 @@ public class NewProductGUIFB
 																				javax.swing.GroupLayout.PREFERRED_SIZE))
 														.addComponent(jLabel_choose_task)))
 								.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup().addGap(168, 168, 168)
-										.addComponent(jButton_add))
-								.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup().addContainerGap()
-										.addGroup(jPanel_dependencies_panelLayout
-												.createParallelGroup(
-														javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup()
-														.addGap(12, 12, 12).addComponent(jScrollPane2,
-																javax.swing.GroupLayout.PREFERRED_SIZE, 381,
-																javax.swing.GroupLayout.PREFERRED_SIZE))
-												.addComponent(jLabel_choose_dependencies))))
+										.addComponent(jButton_add).addGap(18, 18, 18).addComponent(
+												jLabel_task_added_warning))
+								.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jPanel_dependencies_panelLayout
+														.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+														.addGroup(jPanel_dependencies_panelLayout
+																.createSequentialGroup().addGap(12, 12, 12)
+																.addComponent(jScrollPane2,
+																		javax.swing.GroupLayout.PREFERRED_SIZE, 381,
+																		javax.swing.GroupLayout.PREFERRED_SIZE))
+														.addComponent(jLabel_choose_dependencies))))
 						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		jPanel_dependencies_panelLayout.setVerticalGroup(
-				jPanel_dependencies_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup().addGap(5, 5, 5)
-								.addComponent(jLabel_choose_task)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(18, 18, 18).addComponent(jLabel_choose_dependencies)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
-								.addGap(18, 18, 18).addComponent(jButton_add).addContainerGap()));
-
+		jPanel_dependencies_panelLayout.setVerticalGroup(jPanel_dependencies_panelLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel_dependencies_panelLayout.createSequentialGroup().addGap(5, 5, 5)
+						.addComponent(jLabel_choose_task)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(18, 18, 18).addComponent(jLabel_choose_dependencies)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+						.addGap(18, 18, 18)
+						.addGroup(jPanel_dependencies_panelLayout
+								.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(jButton_add).addComponent(jLabel_task_added_warning))
+						.addContainerGap()));
 		jTable_choosen_tasks.setModel(
 				new javax.swing.table.DefaultTableModel(new Object[][] {}, new String[] { "Task", "Dependencies" }));
 		jScrollPane3.setViewportView(jTable_choosen_tasks);
@@ -196,7 +300,18 @@ public class NewProductGUIFB
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
 			{
-				jButton_create_productActionPerformed(evt);
+				try
+				{
+					jButton_create_productActionPerformed(evt);
+				} catch (FileNotFoundException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -221,12 +336,14 @@ public class NewProductGUIFB
 								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(jPanel_dependencies_panel, javax.swing.GroupLayout.PREFERRED_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jTextField_product_name, javax.swing.GroupLayout.PREFERRED_SIZE, 160,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addGroup(layout.createSequentialGroup()
+										.addComponent(jTextField_product_name, javax.swing.GroupLayout.PREFERRED_SIZE,
+												160, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(18, 18, 18).addComponent(jLabel_empty_name_warning)))
 								.addGap(18, 18, 18)
 								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(jLabel1).addComponent(
-												jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 467,
+										.addComponent(jLabel1)
+										.addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 467,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
 												layout.createSequentialGroup().addComponent(jButton_create_product)
@@ -237,19 +354,22 @@ public class NewProductGUIFB
 				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
 				.createSequentialGroup().addGap(21, 21, 21).addComponent(jLabel_product_name).addGap(12, 12, 12)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup().addGroup(layout
+								.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(jTextField_product_name, javax.swing.GroupLayout.PREFERRED_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(jLabel_empty_name_warning))
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(jPanel_dependencies_panel,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
+										.addComponent(jPanel_dependencies_panel, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addGroup(layout.createSequentialGroup().addComponent(jLabel1).addGap(9, 9, 9)
 												.addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.PREFERRED_SIZE))))
 						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
 								layout.createSequentialGroup().addComponent(jButton_delete).addGap(243, 243, 243)
 										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -261,7 +381,7 @@ public class NewProductGUIFB
 
 	private void jButton_deleteActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		// TODO add your handling code here:
+		ie_delete_step.serviceEvent(this);
 	}
 
 	private void jButton_addActionPerformed(java.awt.event.ActionEvent evt)
@@ -279,13 +399,30 @@ public class NewProductGUIFB
 
 		}
 		Task temp_task = new Task(temp_selected_task, temp_dependencies);
-		all_selected_tasks.add(temp_task);
-		redraw_chosen_task_table();
+		if (!task_already_added(temp_task))
+		{
+			all_selected_tasks.add(temp_task);
+			redraw_chosen_task_table();
+		}
+
 	}
 
 	private void jButton_create_productActionPerformed(java.awt.event.ActionEvent evt)
+			throws FileNotFoundException, UnsupportedEncodingException
 	{
-		// TODO add your handling code here:
+		String temp_product_name = jTextField_product_name.getText();
+		if (temp_product_name.matches("\\s*"))
+		{
+			jLabel_empty_name_warning.setText("Name is Empty");
+			jLabel_empty_name_warning.setForeground(Color.RED);
+		} else
+		{
+			jLabel_empty_name_warning.setText("");
+			save_product(temp_product_name);
+			newProductFrame.dispose();
+		}
+
+		// TODO
 	}
 
 	private void jButton_closeActionPerformed(java.awt.event.ActionEvent evt)
@@ -351,6 +488,37 @@ public class NewProductGUIFB
 
 		}
 
+	}
+
+	public boolean task_already_added(Task task)
+	{
+		String temp_task_name = task.getName();
+		for (int i = 0; i < all_selected_tasks.size(); i++)
+		{
+			if (all_selected_tasks.get(i).getName().equals(temp_task_name))
+			{
+				jLabel_task_added_warning.setText("Task already added");
+				jLabel_task_added_warning.setForeground(Color.red);
+				return true;
+			}
+		}
+		jLabel_task_added_warning.setText("");
+		return false;
+	}
+
+	private void save_product(String product_name) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		String user_home_directory = System.getProperty("user.home");
+
+		File file = new File(user_home_directory + "/HMI_Worker/Products/" + product_name + ".product");
+		file.getParentFile().mkdirs();
+		PrintWriter writer = new PrintWriter(file, "UTF-8");
+		for (int i = 0; i < all_selected_tasks.size(); i++)
+		{
+			writer.println(all_selected_tasks.get(i).toString());
+		}
+
+		writer.close();
 	}
 
 	public static void main(String[] args)

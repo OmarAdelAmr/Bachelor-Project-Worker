@@ -38,4 +38,19 @@ public class Task
 	{
 		this.dependencies = dependencies;
 	}
+
+	public String toString()
+	{
+		String result = this.name + "~";
+		for (int i = 0; i < this.dependencies.size(); i++)
+		{
+			result += this.dependencies.get(i).getName();
+			if (i < this.dependencies.size() - 1)
+			{
+				result += "~";
+			}
+
+		}
+		return result;
+	}
 }
