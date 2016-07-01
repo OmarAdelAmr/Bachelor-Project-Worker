@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 
@@ -22,6 +21,8 @@ public class NewTaskGUIFB extends FBInstance
 	private boolean start_recorder = false;
 	private String task_name_copy;
 	private String selected_arm_copy;
+	private long begin_recording_timing;
+	private long end_recording_timing;
 	/** END OF CHECK VARS */
 
 	/** GUI Variables declaration */
@@ -284,6 +285,7 @@ public class NewTaskGUIFB extends FBInstance
 				jLabel4.setText("");
 				iv_new_task_name.value = "Start~" + temp_task_name;
 				iv_selected_arm.value = select_arm.getSelectedItem().toString();
+				begin_recording_timing = System.currentTimeMillis();
 				ie_start_stop_recording.serviceEvent(this);
 			}
 
@@ -294,8 +296,9 @@ public class NewTaskGUIFB extends FBInstance
 			iv_new_task_name.value = "Stop";
 			try
 			{
-
-				save_task(task_name_copy, selected_arm_copy);
+				end_recording_timing = System.currentTimeMillis();
+				long time_diff = end_recording_timing - begin_recording_timing;
+				save_task(task_name_copy, selected_arm_copy, time_diff);
 			} catch (FileNotFoundException | UnsupportedEncodingException e)
 			{
 				System.out.println("Cannot write task data");
@@ -310,7 +313,9 @@ public class NewTaskGUIFB extends FBInstance
 		{
 			try
 			{
-				save_task(task_name_copy, selected_arm_copy);
+				end_recording_timing = System.currentTimeMillis();
+				long time_diff = end_recording_timing - begin_recording_timing;
+				save_task(task_name_copy, selected_arm_copy, time_diff);
 			} catch (FileNotFoundException | UnsupportedEncodingException e)
 			{
 				System.out.println("Cannot write task data");
@@ -335,7 +340,7 @@ public class NewTaskGUIFB extends FBInstance
 			{
 				result += currentLine + "~";
 			}
-			if (result.charAt(result.length() - 1) == '~')
+			if (result.length() > 0 && result.charAt(result.length() - 1) == '~')
 			{
 				result = result.substring(0, result.length() - 1);
 			}
@@ -350,25 +355,37 @@ public class NewTaskGUIFB extends FBInstance
 
 	// This method writes the new task data to the system when "stop recording"
 	// button is pressed
-	private void save_task(String new_task_name, String arm) throws FileNotFoundException, UnsupportedEncodingException
+	private void save_task(String new_task_name, String arm, long task_period)
+			throws FileNotFoundException, UnsupportedEncodingException
 	{
 
 		String old_data = read_all_tasks(arm);
 		String[] old_data_arr = old_data.split("~");
-		if (!Arrays.asList(old_data_arr).contains(new_task_name))
+
+		String user_home_directory = System.getProperty("user.home");
+		File file = new File(user_home_directory + "/HMI_Worker/Tasks/" + arm + ".task");
+		file.getParentFile().mkdirs();
+
+		PrintWriter writer = new PrintWriter(file, "UTF-8");
+
+		for (int i = 0; i < old_data_arr.length; i++)
 		{
-			String user_home_directory = System.getProperty("user.home");
-			File file = new File(user_home_directory + "/HMI_Worker/Tasks/" + arm + ".task");
-			file.getParentFile().mkdirs();
-			PrintWriter writer = new PrintWriter(file, "UTF-8");
-			for (int i = 0; i < old_data_arr.length; i++)
+			if (!old_data_arr[i].matches("\\s*"))
 			{
-				if (!old_data_arr[i].matches("\\s*"))
+				String[] task_details = old_data_arr[i].split(":");
+				System.out.println(task_details.length);
+				System.out.println(old_data_arr[i]);
+				System.out.println(task_details[1]);
+				if (!task_details[1].equals(new_task_name))
+				{
 					writer.println(old_data_arr[i]);
+				}
 			}
-			writer.print(arm + ": " + new_task_name);
-			writer.close();
+
 		}
+
+		writer.print(arm + ":" + new_task_name + ":" + task_period);
+		writer.close();
 
 	}
 

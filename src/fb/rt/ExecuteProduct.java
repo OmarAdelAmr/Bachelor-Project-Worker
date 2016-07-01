@@ -10,38 +10,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-
 import fb.components.HumanTask;
 import fb.components.RobotTask;
 import fb.components.Task;
+import fb.datatype.ANY;
+import fb.datatype.WSTRING;
 
 public class ExecuteProduct extends FBInstance
 {
 
 	private ArrayList<Task> test_arr = new ArrayList<Task>();
 
-	public void test() throws IOException
-	{
-		test_arr.add(new RobotTask("Robot Task 1"));
-		test_arr.add(new HumanTask("Human Task 1"));
-		test_arr.add(new HumanTask("Human Task 2"));
-		test_arr.add(new RobotTask("Robot Task 2"));
-		test_arr.add(new RobotTask("Robot Task 3"));
-		test_arr.add(new RobotTask("Robot Task 4"));
-		test_arr.add(new HumanTask("Human Task 3"));
-		execute_order();
-	}
-
 	// TCP Client Variables
-	Socket skt;
+	private Socket skt;
+	private int socket_port = 10015;
 	// End of TCP Variables
 
+	// Gesture Variables
+	private String last_gesture = "";
+	private int last_gesture_counter = 0;
+	// End of Gesture Variables
+
 	// GUI Variables
-	int image_hight = 700;
-	int image_width = 600;
+	private int image_hight = 700;
+	private int image_width = 600;
 	private JFrame execute_product_frame = new JFrame();
 	private javax.swing.JLabel image_label;
 	// End of GUI Variables
@@ -49,6 +43,10 @@ public class ExecuteProduct extends FBInstance
 	// INPUT EVENTS
 	public EventServer ie_init_execute_product = new EventInput(this);
 	// END OF INPUT EVENTS
+
+	// INPUT VARIABLES
+	public WSTRING iv_product_name = new WSTRING(); // INPUT
+	// END OF INPUT VARIABLES
 
 	public ExecuteProduct() throws IOException
 	{
@@ -64,6 +62,30 @@ public class ExecuteProduct extends FBInstance
 		if ("ie_init_execute_product".equals(s))
 			return ie_init_execute_product;
 		return super.eiNamed(s);
+	}
+
+	/** LINKING INPUT VARIABLES TO THEIR NAMES */
+	public ANY ivNamed(String s) throws FBRManagementException
+	{
+		if ("iv_product_name".equals(s))
+			return iv_product_name;
+		return super.ivNamed(s);
+	}
+
+	/** LINKING INPUT VARIABLES TO THEIR VALUES */
+	public void connectIV(String ivName, ANY newIV) throws FBRManagementException
+	{
+		if ("iv_product_name".equals(ivName))
+		{
+			connect_iv_product_name((WSTRING) newIV);
+			return;
+		}
+		super.connectIV(ivName, newIV);
+	}
+
+	private void connect_iv_product_name(WSTRING newIV)
+	{
+		iv_product_name = newIV;
 	}
 
 	/** Defining the Methods */
@@ -84,7 +106,6 @@ public class ExecuteProduct extends FBInstance
 	{
 		initComponents();
 		test();
-
 	}
 
 	private void initComponents()
@@ -150,9 +171,7 @@ public class ExecuteProduct extends FBInstance
 		{
 			if (test_arr.get(i) instanceof RobotTask)
 			{
-
 				create_image(i);
-
 				try
 				{
 					Thread.sleep(5000);
@@ -183,7 +202,6 @@ public class ExecuteProduct extends FBInstance
 			// Message from client
 			if ((input = in.readLine()) != null)
 			{
-				System.out.println(input);
 				if (input.equals("2"))
 				{
 					skt.close();
@@ -202,8 +220,7 @@ public class ExecuteProduct extends FBInstance
 			{
 				try
 				{
-
-					skt = new Socket("127.0.0.1", 10013);
+					skt = new Socket("127.0.0.1", socket_port);
 					is_connected = true;
 					System.out.println("Connected");
 
@@ -232,7 +249,18 @@ public class ExecuteProduct extends FBInstance
 	public static void main(String[] args) throws IOException
 	{
 		new ExecuteProduct();
+	}
 
+	public void test() throws IOException
+	{
+		test_arr.add(new RobotTask("Robot Task 1"));
+		test_arr.add(new HumanTask("Human Task 1"));
+		test_arr.add(new HumanTask("Human Task 2"));
+		test_arr.add(new RobotTask("Robot Task 2"));
+		test_arr.add(new RobotTask("Robot Task 3"));
+		test_arr.add(new RobotTask("Robot Task 4"));
+		test_arr.add(new HumanTask("Human Task 3"));
+		execute_order();
 	}
 
 }

@@ -215,7 +215,6 @@ public class MainAppGUIFB extends FBInstance
 			}
 		}
 
-		System.out.println(res);
 		return res;
 	}
 
