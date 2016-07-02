@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+
 import fb.components.HumanTask;
 import fb.components.RobotTask;
 import fb.components.Task;
@@ -53,6 +55,7 @@ public class ExecuteProduct extends FBInstance
 		super();
 		// TODO
 		initComponents();
+		TCP_open_connection(true);
 		test();
 	}
 
@@ -169,60 +172,66 @@ public class ExecuteProduct extends FBInstance
 	{
 		for (int i = 0; i < test_arr.size(); i++)
 		{
-			if (test_arr.get(i) instanceof RobotTask)
+			Task temp_task = test_arr.get(i);
+			if (temp_task instanceof RobotTask)
 			{
 				create_image(i);
 				try
 				{
-					Thread.sleep(5000);
+					Thread.sleep(((RobotTask) temp_task).getTask_time());
 				} catch (InterruptedException ex)
 				{
 					Thread.currentThread().interrupt();
 				}
-			} else if (test_arr.get(i) instanceof HumanTask)
+			} else if (temp_task instanceof HumanTask)
 			{
 				create_image(i);
-				read_from_leap();
+				read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
 			}
 			if (i == test_arr.size() - 1)
 			{
 				create_image(test_arr.size());
 			}
 		}
-		TCP_connection_switch(false);
+		TCP_open_connection(false);
 	}
 
-	public void read_from_leap() throws IOException
+	public void read_from_leap(String required_gesture) throws IOException
 	{
-		TCP_connection_switch(true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
-		String input = "";
+		System.out.println(required_gesture);
 		while (true)
 		{
 			// Message from client
-			if ((input = in.readLine()) != null)
+			if ((last_gesture = in.readLine()) != null)
 			{
-				if (input.equals("2"))
+				if (last_gesture.equals(required_gesture))
 				{
-					skt.close();
-					break;
+					last_gesture_counter++;
+					System.out.println(last_gesture_counter);
+					if (last_gesture_counter == 50)
+					{
+						break;
+					}
+
 				}
 			}
 		}
+		last_gesture = "";
+		last_gesture_counter = 0;
 	}
 
-	public void TCP_connection_switch(boolean switch_flag) throws IOException
+	public void TCP_open_connection(boolean open_flag) throws IOException
 	{
-		if (switch_flag)
+		if (open_flag)
 		{
-			boolean is_connected = false;
-			while (!is_connected)
+			while (true)
 			{
 				try
 				{
 					skt = new Socket("127.0.0.1", socket_port);
-					is_connected = true;
 					System.out.println("Connected");
+					break;
 
 				} catch (IOException e)
 				{
@@ -253,13 +262,13 @@ public class ExecuteProduct extends FBInstance
 
 	public void test() throws IOException
 	{
-		test_arr.add(new RobotTask("Robot Task 1"));
-		test_arr.add(new HumanTask("Human Task 1"));
-		test_arr.add(new HumanTask("Human Task 2"));
-		test_arr.add(new RobotTask("Robot Task 2"));
-		test_arr.add(new RobotTask("Robot Task 3"));
-		test_arr.add(new RobotTask("Robot Task 4"));
-		test_arr.add(new HumanTask("Human Task 3"));
+		test_arr.add(new RobotTask("Robot Task 1", 10000));
+		test_arr.add(new HumanTask("Human Task 1", "Tool"));
+		test_arr.add(new HumanTask("Human Task 2", "Right Hand:Front"));
+		test_arr.add(new RobotTask("Robot Task 2", 9000));
+		test_arr.add(new RobotTask("Robot Task 3", 10000));
+		test_arr.add(new RobotTask("Robot Task 4", 10000));
+		test_arr.add(new HumanTask("Human Task 3", "Swipe Right"));
 		execute_order();
 	}
 

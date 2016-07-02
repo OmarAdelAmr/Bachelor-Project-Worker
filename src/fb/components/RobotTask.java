@@ -6,18 +6,29 @@ public class RobotTask extends Task
 {
 
 	private String arm;
+	private long task_time;
 
-	public RobotTask(String name, ArrayList<Task> dependencies, String arm)
+	public RobotTask(String name, ArrayList<Task> dependencies, String arm, long task_time)
 	{
 		super(name, dependencies);
 		this.arm = arm;
-		// TODO Auto-generated constructor stub
+		this.task_time = task_time;
 	}
 
-	public RobotTask(String name)
+	public RobotTask(String name, long task_time)
 	{
 		super(name);
-		// TODO Auto-generated constructor stub
+		this.task_time = task_time;
+	}
+
+	public long getTask_time()
+	{
+		return task_time;
+	}
+
+	public void setTask_time(long task_time)
+	{
+		this.task_time = task_time;
 	}
 
 	public String getArm()

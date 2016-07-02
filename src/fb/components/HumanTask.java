@@ -6,16 +6,16 @@ public class HumanTask extends Task
 {
 	private String associated_gesture;
 
-	public HumanTask(String name, ArrayList<Task> dependencies)
+	public HumanTask(String name, ArrayList<Task> dependencies, String associated_gesture)
 	{
 		super(name, dependencies);
-		// TODO Auto-generated constructor stub
+		this.associated_gesture = associated_gesture;
 	}
 
-	public HumanTask(String name)
+	public HumanTask(String name, String associated_gesture)
 	{
 		super(name);
-		// TODO Auto-generated constructor stub
+		this.associated_gesture = associated_gesture;
 	}
 
 	public String getAssociated_gesture()
