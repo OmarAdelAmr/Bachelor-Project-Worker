@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import fb.datatype.ANY;
 import fb.datatype.WSTRING;
 
-public class NewTaskGUIFB extends FBInstance
+public class NewRobotTaskGUIFB extends FBInstance
 {
 
 	/** CHECK VARS */
@@ -60,7 +60,7 @@ public class NewTaskGUIFB extends FBInstance
 
 	/** END OF OUTPUT EVENTS */
 
-	public NewTaskGUIFB()
+	public NewRobotTaskGUIFB()
 	{
 		super();
 		// TODO
@@ -188,8 +188,8 @@ public class NewTaskGUIFB extends FBInstance
 
 		jLabel2.setText("Choose Type:");
 
-		select_arm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Worker Task",
-				"Robot Task - Right Arm", "Robot Task - Left Arm", "Robot Task - Both Arms" }));
+		select_arm.setModel(new javax.swing.DefaultComboBoxModel<>(
+				new String[] { "Robot Task - Right Arm", "Robot Task - Left Arm", "Robot Task - Both Arms" }));
 
 		task_name.setText("");
 
@@ -391,7 +391,7 @@ public class NewTaskGUIFB extends FBInstance
 
 	public static void main(String[] args)
 	{
-		new NewTaskGUIFB();
+		new NewRobotTaskGUIFB();
 	}
 
 }
