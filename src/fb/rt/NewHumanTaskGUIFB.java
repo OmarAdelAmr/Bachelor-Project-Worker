@@ -92,7 +92,7 @@ public class NewHumanTaskGUIFB extends FBInstance
 		jLabel_choose_gesture.setText("Choose Gesture:");
 
 		jComboBox_gestures.setModel(new javax.swing.DefaultComboBoxModel<>(
-				new String[] { "Right Hand:Back", "Right Hand:Front", "Left Hand:Back", "Left Hand:Front", "Tool",
+				new String[] { "Right Hand,Back", "Right Hand,Front", "Left Hand,Back", "Left Hand,Front", "Tool",
 						"Swipe Right", "Swipe Left", "Screentab", "Keytab" }));
 		jComboBox_gestures.addActionListener(new java.awt.event.ActionListener()
 		{
@@ -286,7 +286,7 @@ public class NewHumanTaskGUIFB extends FBInstance
 
 		}
 
-		writer.print(new_task_name + ":" + new_task_gesture);
+		writer.print("Human Task:" + new_task_name + ":" + new_task_gesture);
 		writer.close();
 
 	}

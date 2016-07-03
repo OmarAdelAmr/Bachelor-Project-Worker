@@ -189,7 +189,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 		jLabel2.setText("Choose Type:");
 
 		select_arm.setModel(new javax.swing.DefaultComboBoxModel<>(
-				new String[] { "Robot Task - Right Arm", "Robot Task - Left Arm", "Robot Task - Both Arms" }));
+				new String[] { "Robot Task:Right Arm", "Robot Task:Left Arm", "Robot Task:Both Arms" }));
 
 		task_name.setText("");
 
@@ -329,7 +329,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 	/////////////////////// Helper Methods ////////////////////
 	private String read_all_tasks(String arm)
 	{
-		String path = System.getProperty("user.home") + "/HMI_Worker/Tasks/" + arm + ".task";
+		String path = System.getProperty("user.home") + "/HMI_Worker/Tasks/Robot_tasks.task";
 		BufferedReader br;
 		try
 		{
@@ -363,7 +363,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 		String[] old_data_arr = old_data.split("~");
 
 		String user_home_directory = System.getProperty("user.home");
-		File file = new File(user_home_directory + "/HMI_Worker/Tasks/" + arm + ".task");
+		File file = new File(user_home_directory + "/HMI_Worker/Tasks/Robot_tasks.task");
 		file.getParentFile().mkdirs();
 
 		PrintWriter writer = new PrintWriter(file, "UTF-8");

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -23,7 +24,7 @@ import fb.datatype.WSTRING;
 public class ExecuteProduct extends FBInstance
 {
 
-	private ArrayList<Task> test_arr = new ArrayList<Task>();
+	private ArrayList<Task> product_tasks_arr = new ArrayList<Task>();
 
 	// TCP Client Variables
 	private Socket skt;
@@ -56,7 +57,8 @@ public class ExecuteProduct extends FBInstance
 		// TODO
 		initComponents();
 		TCP_open_connection(true);
-		test();
+		iv_product_name.value = "Product 1";
+		execute_order();
 	}
 
 	/** LINKING INPUT EVENTS TO THEIR NAMES */
@@ -100,7 +102,6 @@ public class ExecuteProduct extends FBInstance
 				service_ie_init_execute_product();
 			} catch (IOException e1)
 			{
-				// TODO
 				e1.printStackTrace();
 			}
 	}
@@ -108,9 +109,12 @@ public class ExecuteProduct extends FBInstance
 	private void service_ie_init_execute_product() throws IOException
 	{
 		initComponents();
-		test();
+		TCP_open_connection(true);
+		execute_order();
+		// TODO
 	}
 
+	///////////////////////////////// GUI /////////////////////////////////
 	private void initComponents()
 	{
 
@@ -131,6 +135,82 @@ public class ExecuteProduct extends FBInstance
 		execute_product_frame.setVisible(true);
 	}
 
+	////////////////////////////// Helper Methods //////////////////////////////
+	public void execute_order() throws IOException
+	{
+		String product_name = iv_product_name.value;
+		product_tasks_arr = new ArrayList<Task>(read_product_tasks(product_name));
+		// TODO Add dependencies
+		for (int i = 0; i < product_tasks_arr.size(); i++)
+		{
+			Task temp_task = product_tasks_arr.get(i);
+			if (temp_task instanceof RobotTask)
+			{
+				create_image(i);
+				try
+				{
+					Thread.sleep(((RobotTask) temp_task).getTask_time() + 10000);
+				} catch (InterruptedException ex)
+				{
+					Thread.currentThread().interrupt();
+				}
+			} else if (temp_task instanceof HumanTask)
+			{
+				create_image(i);
+				read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
+			}
+			if (i == product_tasks_arr.size() - 1)
+			{
+				create_image(product_tasks_arr.size());
+			}
+		}
+		TCP_open_connection(false);
+
+		// TODO out event
+		try
+		{
+			Thread.sleep(3000);
+		} catch (InterruptedException ex)
+		{
+			Thread.currentThread().interrupt();
+		}
+		execute_product_frame.dispose();
+	}
+
+	public ArrayList<Task> read_product_tasks(String product_name)
+	{
+		String path = System.getProperty("user.home") + "/HMI_Worker/Products/" + product_name + ".product";
+		BufferedReader br;
+		ArrayList<Task> result = new ArrayList<Task>();
+		try
+		{
+			br = new BufferedReader(new FileReader(path));
+			String currentLine = "";
+
+			while ((currentLine = br.readLine()) != null)
+			{
+				String[] temp_currentLine_arr = currentLine.split("~");
+				// TODO Add Dependencies Here
+				String[] temp_task_details = temp_currentLine_arr[0].split(":");
+				if (temp_task_details[0].equals("Human Task"))
+				{
+					result.add(new HumanTask(temp_task_details[1], temp_task_details[2]));
+				} else if (temp_task_details[0].equals("Robot Task"))
+				{
+					result.add(new RobotTask(temp_task_details[1] + ":" + temp_task_details[2],
+							Long.parseLong(temp_task_details[3])));
+				}
+
+			}
+			br.close();
+			return result;
+		} catch (IOException e)
+		{
+			System.out.println("Execute Product Class: *read_product_tasks* Method");
+			return result;
+		}
+	}
+
 	public void create_image(int current_task_index) throws IOException
 	{
 		BufferedImage img = new BufferedImage(image_hight, image_width, BufferedImage.TYPE_INT_RGB);
@@ -144,20 +224,29 @@ public class ExecuteProduct extends FBInstance
 		g.setFont(new Font("Arial", Font.PLAIN, 30));
 		int x_position = 10;
 		int y_position = 35;
-		for (int i = 0; i < test_arr.size(); i++)
+		for (int i = 0; i < product_tasks_arr.size(); i++)
 		{
+			Task temp_task = product_tasks_arr.get(i);
+			String temp_task_details = "";
+			if (temp_task instanceof RobotTask)
+			{
+				temp_task_details = temp_task.getName();
+			} else
+			{
+				temp_task_details = temp_task.getName() + "(" + ((HumanTask) temp_task).getAssociated_gesture() + ")";
+			}
 			if (i < current_task_index)
 			{
 				g.setColor(Color.GREEN);
-				g.drawString(test_arr.get(i).getName() + " ==> DONE", x_position, y_position);
+				g.drawString(temp_task_details + " ==> DONE", x_position, y_position);
 			} else if (i == current_task_index)
 			{
 				g.setColor(Color.RED);
-				g.drawString(test_arr.get(i).getName() + " ==> In Progress", x_position, y_position);
+				g.drawString(temp_task_details + " ==> In Progress", x_position, y_position);
 			} else
 			{
 				g.setColor(Color.BLACK);
-				g.drawString(test_arr.get(i).getName(), x_position, y_position);
+				g.drawString(temp_task_details, x_position, y_position);
 			}
 
 			y_position += 35;
@@ -165,35 +254,6 @@ public class ExecuteProduct extends FBInstance
 
 		g.dispose();
 		image_label.setIcon(new ImageIcon(img));
-
-	}
-
-	public void execute_order() throws IOException
-	{
-		for (int i = 0; i < test_arr.size(); i++)
-		{
-			Task temp_task = test_arr.get(i);
-			if (temp_task instanceof RobotTask)
-			{
-				create_image(i);
-				try
-				{
-					Thread.sleep(((RobotTask) temp_task).getTask_time());
-				} catch (InterruptedException ex)
-				{
-					Thread.currentThread().interrupt();
-				}
-			} else if (temp_task instanceof HumanTask)
-			{
-				create_image(i);
-				read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
-			}
-			if (i == test_arr.size() - 1)
-			{
-				create_image(test_arr.size());
-			}
-		}
-		TCP_open_connection(false);
 	}
 
 	public void read_from_leap(String required_gesture) throws IOException
@@ -255,21 +315,21 @@ public class ExecuteProduct extends FBInstance
 		}
 	}
 
+	public void test() throws IOException
+	{
+		product_tasks_arr.add(new RobotTask("Robot Task 1", 10000));
+		product_tasks_arr.add(new HumanTask("Human Task 1", "Tool"));
+		product_tasks_arr.add(new HumanTask("Human Task 2", "Right Hand:Front"));
+		product_tasks_arr.add(new RobotTask("Robot Task 2", 9000));
+		product_tasks_arr.add(new RobotTask("Robot Task 3", 10000));
+		product_tasks_arr.add(new RobotTask("Robot Task 4", 10000));
+		product_tasks_arr.add(new HumanTask("Human Task 3", "Swipe Right"));
+		execute_order();
+	}
+
 	public static void main(String[] args) throws IOException
 	{
 		new ExecuteProduct();
-	}
-
-	public void test() throws IOException
-	{
-		test_arr.add(new RobotTask("Robot Task 1", 10000));
-		test_arr.add(new HumanTask("Human Task 1", "Tool"));
-		test_arr.add(new HumanTask("Human Task 2", "Right Hand:Front"));
-		test_arr.add(new RobotTask("Robot Task 2", 9000));
-		test_arr.add(new RobotTask("Robot Task 3", 10000));
-		test_arr.add(new RobotTask("Robot Task 4", 10000));
-		test_arr.add(new HumanTask("Human Task 3", "Swipe Right"));
-		execute_order();
 	}
 
 }

@@ -2,6 +2,7 @@ package fb.mas;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.ContainerController;
 
 @SuppressWarnings("serial")
@@ -31,10 +32,10 @@ public class SenderAgent extends Agent
 		}
 	}
 
-	protected void setup()
-	{
-
-	}
+	// protected void setup()
+	// {
+	//
+	// }
 
 	public AID getServerID()
 	{
@@ -54,6 +55,16 @@ public class SenderAgent extends Agent
 	public void setServerAddress(String serverAddress)
 	{
 		ServerAddress = serverAddress;
+	}
+
+	public void send_inform_message(String conversationID, String message_content)
+	{
+		ACLMessage inform_message = new ACLMessage(ACLMessage.INFORM);
+		inform_message.setConversationId(conversationID);
+		inform_message.setContent(message_content);
+		this.getServerID().addAddresses(this.getServerAddress());
+		inform_message.addReceiver(this.getServerID());
+		this.send(inform_message);
 	}
 
 }

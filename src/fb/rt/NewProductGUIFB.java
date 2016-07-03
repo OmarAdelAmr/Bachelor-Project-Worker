@@ -40,9 +40,7 @@ public class NewProductGUIFB extends FBInstance
 	// End of variables declaration
 
 	// Written Task data Arrays
-	ArrayList<String> robot_right_tasks = new ArrayList<String>();
-	ArrayList<String> robot_left_tasks = new ArrayList<String>();
-	ArrayList<String> robot_both_tasks = new ArrayList<String>();
+	ArrayList<String> robot_tasks = new ArrayList<String>();
 	ArrayList<String> worker_tasks = new ArrayList<String>();
 	// End of Written Task data Arrays
 
@@ -66,10 +64,8 @@ public class NewProductGUIFB extends FBInstance
 		super();
 
 		// TODO
-		robot_right_tasks = read_all_tasks("Robot Task - Right Arm");
-		robot_left_tasks = read_all_tasks("Robot Task - Left Arm");
-		robot_both_tasks = read_all_tasks("Robot Task - Both Arms");
-		worker_tasks = read_all_tasks("Worker Task");
+		robot_tasks = read_all_tasks("Robot_tasks");
+		worker_tasks = read_all_tasks("Human_tasks");
 		initComponents();
 
 	}
@@ -116,10 +112,8 @@ public class NewProductGUIFB extends FBInstance
 
 	private void service_ie_init_new_product()
 	{
-		robot_right_tasks = read_all_tasks("Robot Task - Right Arm");
-		robot_left_tasks = read_all_tasks("Robot Task - Left Arm");
-		robot_both_tasks = read_all_tasks("Robot Task - Both Arms");
-		worker_tasks = read_all_tasks("Worker Task");
+		robot_tasks = read_all_tasks("Robot_tasks");
+		worker_tasks = read_all_tasks("Human_tasks");
 		initComponents();
 	}
 
@@ -178,9 +172,7 @@ public class NewProductGUIFB extends FBInstance
 		jPanel_dependencies_panel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
 		ArrayList<String> all_tasks = new ArrayList<String>(worker_tasks);
-		all_tasks.addAll(robot_right_tasks);
-		all_tasks.addAll(robot_left_tasks);
-		all_tasks.addAll(robot_both_tasks);
+		all_tasks.addAll(robot_tasks);
 
 		String[] all_tasks_arr = all_tasks.toArray(new String[all_tasks.size()]);
 
@@ -431,9 +423,9 @@ public class NewProductGUIFB extends FBInstance
 	}
 
 	// Helper Methods
-	private ArrayList<String> read_all_tasks(String arm)
+	private ArrayList<String> read_all_tasks(String task_type)
 	{
-		String path = System.getProperty("user.home") + "/HMI_Worker/Tasks/" + arm + ".task";
+		String path = System.getProperty("user.home") + "/HMI_Worker/Tasks/" + task_type + ".task";
 		BufferedReader br;
 		ArrayList<String> result = new ArrayList<String>();
 		try
