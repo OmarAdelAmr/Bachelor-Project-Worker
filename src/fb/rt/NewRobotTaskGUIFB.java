@@ -13,9 +13,12 @@ import javax.swing.JFrame;
 
 import fb.datatype.ANY;
 import fb.datatype.WSTRING;
+import fb.mas.WorkerAgent;
 
 public class NewRobotTaskGUIFB extends FBInstance
 {
+
+	private WorkerAgent new_robot_task_agent;
 
 	/** CHECK VARS */
 	private boolean start_recorder = false;
@@ -63,8 +66,6 @@ public class NewRobotTaskGUIFB extends FBInstance
 	public NewRobotTaskGUIFB()
 	{
 		super();
-		// TODO
-		initComponents();
 	}
 
 	/** LINKING INPUT EVENTS TO THEIR NAMES */
@@ -153,6 +154,8 @@ public class NewRobotTaskGUIFB extends FBInstance
 
 	private void service_ie_init_new_task()
 	{
+		new_robot_task_agent = new WorkerAgent();
+		new_robot_task_agent.start();
 		initComponents();
 
 	}
@@ -160,13 +163,14 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private void service_ie_start_stop_recording()
 	{
 		ov_new_task_name.value = iv_new_task_name.value;
-		System.out.println(ov_new_task_name.value);
+		new_robot_task_agent.send_inform_message("new_task", ov_new_task_name.value);
 		oe_start_stop_recording.serviceEvent(this);
 
 	}
 
 	private void service_ie_close_newTask_window()
 	{
+		new_robot_task_agent.doDelete();
 		newTaskFrame.dispose();
 		oe_close_newTask_window.serviceEvent(this);
 	}
@@ -373,9 +377,6 @@ public class NewRobotTaskGUIFB extends FBInstance
 			if (!old_data_arr[i].matches("\\s*"))
 			{
 				String[] task_details = old_data_arr[i].split(":");
-				System.out.println(task_details.length);
-				System.out.println(old_data_arr[i]);
-				System.out.println(task_details[1]);
 				if (!task_details[1].equals(new_task_name))
 				{
 					writer.println(old_data_arr[i]);

@@ -34,6 +34,11 @@ public class MainAppGUIFB extends FBInstance
 	public WSTRING ov_product_name = new WSTRING(); // OUTPUT
 	// END OF OUTPUT VARIABLES
 
+	public MainAppGUIFB()
+	{
+		super();
+	}
+
 	/////////////////////// FBDK ////////////////////////////
 
 	// LINKING INPUT EVENTS TO THEIR NAMES
@@ -77,13 +82,7 @@ public class MainAppGUIFB extends FBInstance
 
 	}
 
-	public MainAppGUIFB()
-	{
-		super();
-		// TODO
-		initComponents();
-	}
-
+	///////////////////////////////// GUI /////////////////////////////
 	private void initComponents()
 	{
 

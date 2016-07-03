@@ -62,12 +62,6 @@ public class NewProductGUIFB extends FBInstance
 	public NewProductGUIFB()
 	{
 		super();
-
-		// TODO
-		robot_tasks = read_all_tasks("Robot_tasks");
-		worker_tasks = read_all_tasks("Human_tasks");
-		initComponents();
-
 	}
 
 	/////////////////////// FBDK ////////////////////////////
@@ -297,11 +291,9 @@ public class NewProductGUIFB extends FBInstance
 					jButton_create_productActionPerformed(evt);
 				} catch (FileNotFoundException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (UnsupportedEncodingException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -367,6 +359,8 @@ public class NewProductGUIFB extends FBInstance
 										.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 												.addComponent(jButton_close).addComponent(jButton_create_product))))
 				.addContainerGap(18, Short.MAX_VALUE)));
+
+		jTable_choose_from.getColumnModel().getColumn(1).setMaxWidth(60);
 		newProductFrame.setVisible(true);
 		newProductFrame.pack();
 	}
@@ -413,8 +407,6 @@ public class NewProductGUIFB extends FBInstance
 			save_product(temp_product_name);
 			newProductFrame.dispose();
 		}
-
-		// TODO
 	}
 
 	private void jButton_closeActionPerformed(java.awt.event.ActionEvent evt)

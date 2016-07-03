@@ -5,7 +5,7 @@ import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.*;
 
-public class SenderAgentGenerator
+public class WorkerAgentGenerator
 {
 	/**
 	 * A container instance for the

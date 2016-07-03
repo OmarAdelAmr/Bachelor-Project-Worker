@@ -6,36 +6,36 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.ContainerController;
 
 @SuppressWarnings("serial")
-public class SenderAgent extends Agent
+public class WorkerAgent extends Agent
 {
 
 	private AID ServerID;
 	private String ServerAddress;
+	private static int agents_counter = 1;
 
-	public SenderAgent()
+	public WorkerAgent()
 	{
 		this.ServerID = new AID("Baxter@BaxterPlatform", AID.ISGUID);
 		this.ServerAddress = "http://192.168.12.160:7778/acc";
-		// this.ServerAddress = "http://172.20.10.2:7778/acc";
-		this.start();
 	}
 
 	public void start()
 	{
-		ContainerController cc = SenderAgentGenerator.getCCInstance();
+		ContainerController cc = WorkerAgentGenerator.getCCInstance();
 		try
 		{
-			cc.acceptNewAgent("Worker", this).start();
+			cc.acceptNewAgent("Worker" + agents_counter, this).start();
+			agents_counter++;
 		} catch (Exception ex)
 		{
 			ex.printStackTrace();
 		}
 	}
 
-	// protected void setup()
-	// {
-	//
-	// }
+	protected void setup()
+	{
+
+	}
 
 	public AID getServerID()
 	{

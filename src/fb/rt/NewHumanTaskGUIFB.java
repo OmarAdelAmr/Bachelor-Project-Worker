@@ -40,11 +40,38 @@ public class NewHumanTaskGUIFB extends FBInstance
 	public NewHumanTaskGUIFB()
 	{
 		super();
-		// TODO
-		initComponents();
+	}
+
+	/////////////////////////////// FBDK ///////////////////////////
+	/** LINKING INPUT EVENTS TO THEIR NAMES */
+	public EventServer eiNamed(String s)
+	{
+		if ("ie_init_new_human_task".equals(s))
+			return ie_init_new_human_task;
+		return super.eiNamed(s);
+	}
+
+	/** LINKING OUTPUT EVENTS TO THEIR NAMES */
+	public EventOutput eoNamed(String s)
+	{
+		if ("oe_close_new_human_task_window".equals(s))
+			return oe_close_new_human_task_window;
+		return super.eoNamed(s);
+	}
+
+	/** Defining the Methods */
+	public void serviceEvent(EventServer e)
+	{
+		if (e == ie_init_new_human_task)
+			service_ie_init_new_human_task();
 	}
 
 	/////////////////////////////// GUI Methods //////////////////////
+
+	private void service_ie_init_new_human_task()
+	{
+		initComponents();
+	}
 
 	private void initComponents()
 	{
@@ -112,11 +139,9 @@ public class NewHumanTaskGUIFB extends FBInstance
 					jButton_create_taskActionPerformed(evt);
 				} catch (FileNotFoundException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (UnsupportedEncodingException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

@@ -20,11 +20,13 @@ import fb.components.RobotTask;
 import fb.components.Task;
 import fb.datatype.ANY;
 import fb.datatype.WSTRING;
+import fb.mas.WorkerAgent;
 
 public class ExecuteProduct extends FBInstance
 {
 
 	private ArrayList<Task> product_tasks_arr = new ArrayList<Task>();
+	private WorkerAgent execution_agent;
 
 	// TCP Client Variables
 	private Socket skt;
@@ -51,14 +53,13 @@ public class ExecuteProduct extends FBInstance
 	public WSTRING iv_product_name = new WSTRING(); // INPUT
 	// END OF INPUT VARIABLES
 
+	// OUTPUT EVENTS
+	public EventOutput oe_close_execute_product_frame = new EventOutput();
+	// END OF OUTPUT EVENTS
+
 	public ExecuteProduct() throws IOException
 	{
 		super();
-		// TODO
-		initComponents();
-		TCP_open_connection(true);
-		iv_product_name.value = "Product 1";
-		execute_order();
 	}
 
 	/** LINKING INPUT EVENTS TO THEIR NAMES */
@@ -67,6 +68,14 @@ public class ExecuteProduct extends FBInstance
 		if ("ie_init_execute_product".equals(s))
 			return ie_init_execute_product;
 		return super.eiNamed(s);
+	}
+
+	/** LINKING OUTPUT EVENTS TO THEIR NAMES */
+	public EventOutput eoNamed(String s)
+	{
+		if ("oe_close_execute_product_frame".equals(s))
+			return oe_close_execute_product_frame;
+		return super.eoNamed(s);
 	}
 
 	/** LINKING INPUT VARIABLES TO THEIR NAMES */
@@ -108,10 +117,11 @@ public class ExecuteProduct extends FBInstance
 
 	private void service_ie_init_execute_product() throws IOException
 	{
-		initComponents();
+		execution_agent = new WorkerAgent();
+		execution_agent.start();
 		TCP_open_connection(true);
+		initComponents();
 		execute_order();
-		// TODO
 	}
 
 	///////////////////////////////// GUI /////////////////////////////////
@@ -146,6 +156,7 @@ public class ExecuteProduct extends FBInstance
 			Task temp_task = product_tasks_arr.get(i);
 			if (temp_task instanceof RobotTask)
 			{
+				execution_agent.send_inform_message("execute_task", temp_task.getName());
 				create_image(i);
 				try
 				{
@@ -164,9 +175,8 @@ public class ExecuteProduct extends FBInstance
 				create_image(product_tasks_arr.size());
 			}
 		}
-		TCP_open_connection(false);
 
-		// TODO out event
+		TCP_open_connection(false);
 		try
 		{
 			Thread.sleep(3000);
@@ -174,6 +184,8 @@ public class ExecuteProduct extends FBInstance
 		{
 			Thread.currentThread().interrupt();
 		}
+		oe_close_execute_product_frame.serviceEvent(this);
+		execution_agent.doDelete();
 		execute_product_frame.dispose();
 	}
 
