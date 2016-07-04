@@ -13,23 +13,20 @@ import javax.swing.JFrame;
 
 import fb.datatype.ANY;
 import fb.datatype.WSTRING;
-import fb.mas.WorkerAgent;
 
 public class NewRobotTaskGUIFB extends FBInstance
 {
 
-	private WorkerAgent new_robot_task_agent;
-
-	/** CHECK VARS */
+	// CHECK VARS
 	private boolean start_recorder = false;
 	private String task_name_copy;
 	private String selected_arm_copy;
 	private long begin_recording_timing;
 	private long end_recording_timing;
-	/** END OF CHECK VARS */
+	// END OF CHECK VARS
 
-	/** GUI Variables declaration */
-	private JFrame newTaskFrame = new JFrame("New Task");
+	// GUI Variables declaration
+	private JFrame newTaskFrame = new JFrame("New Robot Task");
 	private javax.swing.JButton btn_close;
 	private javax.swing.JButton btn_start_stop_recording;
 	private javax.swing.JLabel jLabel1;
@@ -38,34 +35,34 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private javax.swing.JLabel jLabel4;
 	private javax.swing.JComboBox<String> select_arm;
 	private javax.swing.JTextField task_name;
-	/** End of GUI variables declaration */
+	// End of GUI variables declaration
 
-	/** INPUT VARIABLES */
+	// INPUT VARIABLES
 	public WSTRING iv_new_task_name = new WSTRING(); // INPUT
 	public WSTRING iv_selected_arm = new WSTRING(); // INPUT
-	/** END OF INPUT VARIABLES */
+	// END OF INPUT VARIABLES
 
-	/** INPUT EVENTS */
+	// INPUT EVENTS
 	public EventServer ie_init_new_task = new EventInput(this);
 	public EventServer ie_start_stop_recording = new EventInput(this);
 	public EventServer ie_close_newTask_window = new EventInput(this);
-	/** END OF INPUT EVENTS */
+	// END OF INPUT EVENTS
 
-	/** OUTPUT VARIABLES */
+	// OUTPUT VARIABLES
 	public WSTRING ov_new_task_name = new WSTRING();
 	// ov_new_task_name Format => Start~$taskName || Stop
 	public WSTRING ov_selected_arm = new WSTRING();
-	/** END OF OUTPUT VARIABLES */
+	// END OF OUTPUT VARIABLES
 
-	/** OUTPUT EVENTS */
+	// OUTPUT EVENTS
 	public EventOutput oe_start_stop_recording = new EventOutput();
 	public EventOutput oe_close_newTask_window = new EventOutput();
-
-	/** END OF OUTPUT EVENTS */
+	// END OF OUTPUT EVENTS
 
 	public NewRobotTaskGUIFB()
 	{
 		super();
+
 	}
 
 	/** LINKING INPUT EVENTS TO THEIR NAMES */
@@ -154,8 +151,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 
 	private void service_ie_init_new_task()
 	{
-		new_robot_task_agent = new WorkerAgent();
-		new_robot_task_agent.start();
+
 		initComponents();
 
 	}
@@ -163,14 +159,12 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private void service_ie_start_stop_recording()
 	{
 		ov_new_task_name.value = iv_new_task_name.value;
-		new_robot_task_agent.send_inform_message("new_task", ov_new_task_name.value);
 		oe_start_stop_recording.serviceEvent(this);
 
 	}
 
 	private void service_ie_close_newTask_window()
 	{
-		new_robot_task_agent.doDelete();
 		newTaskFrame.dispose();
 		oe_close_newTask_window.serviceEvent(this);
 	}
@@ -178,6 +172,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private void initComponents()
 	{
 
+		newTaskFrame = new JFrame("New Robot Task");
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
 		jLabel3 = new javax.swing.JLabel();

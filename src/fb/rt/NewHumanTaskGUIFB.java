@@ -76,6 +76,7 @@ public class NewHumanTaskGUIFB extends FBInstance
 	private void initComponents()
 	{
 
+		jframe_new_human_task = new JFrame("New Human Task");
 		jLabel_create_new_task = new javax.swing.JLabel();
 		jLabel_task_name = new javax.swing.JLabel();
 		jTextField_task_name = new javax.swing.JTextField();

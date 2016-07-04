@@ -26,11 +26,11 @@ public class ExecuteProduct extends FBInstance
 {
 
 	private ArrayList<Task> product_tasks_arr = new ArrayList<Task>();
-	private WorkerAgent execution_agent;
+	private static WorkerAgent execute_agent = new WorkerAgent();
 
 	// TCP Client Variables
 	private Socket skt;
-	private int socket_port = 10015;
+	private int socket_port = 10016;
 	// End of TCP Variables
 
 	// Gesture Variables
@@ -39,10 +39,10 @@ public class ExecuteProduct extends FBInstance
 	// End of Gesture Variables
 
 	// GUI Variables
+	private JFrame execute_product_frame = new JFrame("Execute Task");
+	private javax.swing.JLabel image_label;
 	private int image_hight = 700;
 	private int image_width = 600;
-	private JFrame execute_product_frame = new JFrame();
-	private javax.swing.JLabel image_label;
 	// End of GUI Variables
 
 	// INPUT EVENTS
@@ -54,12 +54,23 @@ public class ExecuteProduct extends FBInstance
 	// END OF INPUT VARIABLES
 
 	// OUTPUT EVENTS
+	// public EventOutput oe_execute_task_mas = new EventOutput();
 	public EventOutput oe_close_execute_product_frame = new EventOutput();
 	// END OF OUTPUT EVENTS
+
+	// OUTPUT VARIABLES
+	// public WSTRING ov_execute_task_name = new WSTRING();
+	// END oF OUTPUT VARIABLES
 
 	public ExecuteProduct() throws IOException
 	{
 		super();
+		execute_agent.start();
+		// TODO
+		iv_product_name.value = "Product 1";
+		initComponents();
+		TCP_open_connection(true);
+		execute_order();
 	}
 
 	/** LINKING INPUT EVENTS TO THEIR NAMES */
@@ -75,6 +86,8 @@ public class ExecuteProduct extends FBInstance
 	{
 		if ("oe_close_execute_product_frame".equals(s))
 			return oe_close_execute_product_frame;
+		// if ("oe_execute_task_mas".equals(s))
+		// return oe_execute_task_mas;
 		return super.eoNamed(s);
 	}
 
@@ -84,6 +97,14 @@ public class ExecuteProduct extends FBInstance
 		if ("iv_product_name".equals(s))
 			return iv_product_name;
 		return super.ivNamed(s);
+	}
+
+	/** LINKING OUTPUT VARIABLES TO THEIR NAMES */
+	public ANY ovNamed(String s) throws FBRManagementException
+	{
+		// if ("ov_execute_task_name".equals(s))
+		// return ov_execute_task_name;
+		return super.ovNamed(s);
 	}
 
 	/** LINKING INPUT VARIABLES TO THEIR VALUES */
@@ -117,17 +138,18 @@ public class ExecuteProduct extends FBInstance
 
 	private void service_ie_init_execute_product() throws IOException
 	{
-		execution_agent = new WorkerAgent();
-		execution_agent.start();
-		TCP_open_connection(true);
+		iv_product_name.value = "Product 1";
 		initComponents();
+		TCP_open_connection(true);
 		execute_order();
+
 	}
 
 	///////////////////////////////// GUI /////////////////////////////////
 	private void initComponents()
 	{
 
+		execute_product_frame = new JFrame("Execute Task");
 		execute_product_frame = new JFrame();
 		image_label = new javax.swing.JLabel();
 
@@ -148,16 +170,22 @@ public class ExecuteProduct extends FBInstance
 	////////////////////////////// Helper Methods //////////////////////////////
 	public void execute_order() throws IOException
 	{
+		last_gesture = "";
+		last_gesture_counter = 0;
 		String product_name = iv_product_name.value;
 		product_tasks_arr = new ArrayList<Task>(read_product_tasks(product_name));
 		// TODO Add dependencies
 		for (int i = 0; i < product_tasks_arr.size(); i++)
 		{
 			Task temp_task = product_tasks_arr.get(i);
+			create_image(i);
 			if (temp_task instanceof RobotTask)
 			{
-				execution_agent.send_inform_message("execute_task", temp_task.getName());
-				create_image(i);
+				// ov_execute_task_name.value = temp_task.getName();
+				// oe_execute_task_mas.serviceEvent(this);
+				// create_image(i);
+				execute_agent.send_inform_message("execute_task", temp_task.getName());
+
 				try
 				{
 					Thread.sleep(((RobotTask) temp_task).getTask_time() + 10000);
@@ -167,13 +195,14 @@ public class ExecuteProduct extends FBInstance
 				}
 			} else if (temp_task instanceof HumanTask)
 			{
-				create_image(i);
+
 				read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
+				// create_image(i);
 			}
-			if (i == product_tasks_arr.size() - 1)
-			{
-				create_image(product_tasks_arr.size());
-			}
+			// if (i == product_tasks_arr.size() - 1)
+			// {
+			// create_image(product_tasks_arr.size());
+			// }
 		}
 
 		TCP_open_connection(false);
@@ -185,7 +214,6 @@ public class ExecuteProduct extends FBInstance
 			Thread.currentThread().interrupt();
 		}
 		oe_close_execute_product_frame.serviceEvent(this);
-		execution_agent.doDelete();
 		execute_product_frame.dispose();
 	}
 

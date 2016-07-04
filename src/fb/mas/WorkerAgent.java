@@ -16,7 +16,8 @@ public class WorkerAgent extends Agent
 	public WorkerAgent()
 	{
 		this.ServerID = new AID("Baxter@BaxterPlatform", AID.ISGUID);
-		this.ServerAddress = "http://192.168.12.160:7778/acc";
+		// this.ServerAddress = "http://192.168.12.160:7778/acc";
+		this.ServerAddress = "http://172.20.10.2:7778/acc";
 	}
 
 	public void start()

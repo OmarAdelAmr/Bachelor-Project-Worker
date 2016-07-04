@@ -14,7 +14,8 @@ public class MainAppGUIFB extends FBInstance
 	private JFrame mainAppFrame = new JFrame();
 	private javax.swing.JButton jButton_execute;
 	private javax.swing.JButton jButton_new_product;
-	private javax.swing.JButton jButton_new_task;
+	private javax.swing.JButton jButton_new_robot_task;
+	private javax.swing.JButton jButton_new_worker_task;
 	private javax.swing.JComboBox<String> jComboBox_products;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JSeparator jSeparator1;
@@ -25,7 +26,8 @@ public class MainAppGUIFB extends FBInstance
 	// END OF INPUT EVENTS
 
 	// OUTPUT EVENTS
-	public EventOutput oe_init_new_task = new EventOutput();
+	public EventOutput oe_init_new_robot_task = new EventOutput();
+	public EventOutput oe_init_new_human_task = new EventOutput();
 	public EventOutput oe_init_new_product = new EventOutput();
 	public EventOutput oe_execute_product = new EventOutput();
 	// END OF OUTPUT EVENTS
@@ -37,6 +39,7 @@ public class MainAppGUIFB extends FBInstance
 	public MainAppGUIFB()
 	{
 		super();
+
 	}
 
 	/////////////////////// FBDK ////////////////////////////
@@ -52,8 +55,10 @@ public class MainAppGUIFB extends FBInstance
 	// LINKING OUTPUT EVENTS TO THEIR NAMES
 	public EventOutput eoNamed(String s)
 	{
-		if ("oe_init_new_task".equals(s))
-			return oe_init_new_task;
+		if ("oe_init_new_robot_task".equals(s))
+			return oe_init_new_robot_task;
+		if ("oe_init_new_human_task".equals(s))
+			return oe_init_new_human_task;
 		if ("oe_init_new_product".equals(s))
 			return oe_init_new_product;
 		if ("oe_execute_product".equals(s))
@@ -86,21 +91,21 @@ public class MainAppGUIFB extends FBInstance
 	private void initComponents()
 	{
 
-		jButton_new_task = new javax.swing.JButton();
+		mainAppFrame = new JFrame("Main App");
+		jButton_new_robot_task = new javax.swing.JButton();
 		jButton_new_product = new javax.swing.JButton();
 		jLabel1 = new javax.swing.JLabel();
 		jComboBox_products = new javax.swing.JComboBox<>();
 		jButton_execute = new javax.swing.JButton();
 		jSeparator1 = new javax.swing.JSeparator();
+		jButton_new_worker_task = new javax.swing.JButton();
 
-		mainAppFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-		jButton_new_task.setText("Record new task");
-		jButton_new_task.addActionListener(new java.awt.event.ActionListener()
+		jButton_new_robot_task.setText("New Robot Task");
+		jButton_new_robot_task.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
 			{
-				jButton_new_taskActionPerformed(evt);
+				jButton_new_robot_taskActionPerformed(evt);
 			}
 		});
 
@@ -110,6 +115,15 @@ public class MainAppGUIFB extends FBInstance
 			public void actionPerformed(java.awt.event.ActionEvent evt)
 			{
 				jButton_new_productActionPerformed(evt);
+			}
+		});
+
+		jButton_new_worker_task.setText("New Worker Task");
+		jButton_new_worker_task.addActionListener(new java.awt.event.ActionListener()
+		{
+			public void actionPerformed(java.awt.event.ActionEvent evt)
+			{
+				jButton_new_worker_taskActionPerformed(evt);
 			}
 		});
 
@@ -134,52 +148,69 @@ public class MainAppGUIFB extends FBInstance
 		mainAppFrame.getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup().addContainerGap()
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-								.addComponent(jButton_new_product, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jButton_new_task, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										.addComponent(jButton_new_robot_task, javax.swing.GroupLayout.DEFAULT_SIZE,
+												153, Short.MAX_VALUE)
+										.addComponent(jButton_new_worker_task, javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addComponent(jButton_new_product))
 						.addGap(60, 60, 60)
 						.addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 14,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addGap(44, 44, 44)
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jButton_execute).addComponent(jComboBox_products,
-										javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(jButton_execute)
+								.addComponent(jComboBox_products, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addComponent(jLabel1))
 						.addContainerGap(69, Short.MAX_VALUE)));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
-				.createSequentialGroup().addContainerGap(55, Short.MAX_VALUE)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(jButton_new_task).addComponent(jLabel1))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(jComboBox_products, javax.swing.GroupLayout.PREFERRED_SIZE,
-						javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup().addGap(2, 2, 2).addComponent(jButton_new_product))
-						.addGroup(layout.createSequentialGroup().addGap(29, 29, 29).addComponent(jButton_execute)))
-				.addGap(56, 56, 56)).addGroup(
-						layout.createSequentialGroup().addContainerGap().addComponent(jSeparator1).addContainerGap()));
+				.createSequentialGroup().addContainerGap()
+				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+						.createSequentialGroup().addGap(0, 31, Short.MAX_VALUE)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(jButton_new_robot_task).addComponent(jLabel1))
+						.addGap(18, 18, 18)
+						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
+								.createSequentialGroup()
+								.addComponent(jComboBox_products, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addGap(29, 29, 29).addComponent(jButton_execute))
+								.addGroup(layout.createSequentialGroup().addGap(8, 8, 8)
+										.addComponent(jButton_new_worker_task).addGap(26, 26, 26)
+										.addComponent(jButton_new_product)))
+						.addGap(49, 49, 49))
+						.addGroup(layout.createSequentialGroup().addComponent(jSeparator1).addContainerGap()))));
 
+		mainAppFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		mainAppFrame.setVisible(true);
 		mainAppFrame.pack();
 	}
 
-	private void jButton_new_taskActionPerformed(java.awt.event.ActionEvent evt)
+	private void jButton_new_robot_taskActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		oe_init_new_task.serviceEvent(this);
+		oe_init_new_robot_task.serviceEvent(this);
+		mainAppFrame.dispose();
+	}
+
+	private void jButton_new_worker_taskActionPerformed(java.awt.event.ActionEvent evt)
+	{
+		oe_init_new_human_task.serviceEvent(this);
+		mainAppFrame.dispose();
 	}
 
 	private void jButton_new_productActionPerformed(java.awt.event.ActionEvent evt)
 	{
 		oe_init_new_product.serviceEvent(this);
+		mainAppFrame.dispose();
 	}
 
 	private void jButton_executeActionPerformed(java.awt.event.ActionEvent evt)
 	{
 		ov_product_name.value = jComboBox_products.getSelectedItem().toString();
 		oe_execute_product.serviceEvent(this);
+		mainAppFrame.dispose();
 	}
 
 	private static String read_all_products()

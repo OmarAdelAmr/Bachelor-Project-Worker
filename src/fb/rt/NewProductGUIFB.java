@@ -46,18 +46,17 @@ public class NewProductGUIFB extends FBInstance
 
 	ArrayList<Task> all_selected_tasks = new ArrayList<Task>();
 
-	/** INPUT EVENTS */
+	// INPUT EVENTS
 	public EventServer ie_init_new_product = new EventInput(this);
 	public EventServer ie_delete_step = new EventInput(this);
 	public EventServer ie_add_step = new EventInput(this);
 	public EventServer ie_create_product = new EventInput(this);
 	public EventServer ie_cancel = new EventInput(this);
-	/** END OF INPUT EVENTS */
+	// END OF INPUT EVENTS
 
-	/** OUTPUT EVENTS */
+	// OUTPUT EVENTS
 	public EventOutput oe_close_newProduct_window = new EventOutput();
-
-	/** END OF OUTPUT EVENTS */
+	// END OF OUTPUT EVENTS
 
 	public NewProductGUIFB()
 	{
@@ -139,6 +138,7 @@ public class NewProductGUIFB extends FBInstance
 	private void initComponents()
 	{
 
+		newProductFrame = new JFrame("New Product");
 		jLabel_product_name = new javax.swing.JLabel();
 		jTextField_product_name = new javax.swing.JTextField();
 		jPanel_dependencies_panel = new javax.swing.JPanel();
@@ -405,12 +405,14 @@ public class NewProductGUIFB extends FBInstance
 		{
 			jLabel_empty_name_warning.setText("");
 			save_product(temp_product_name);
+			oe_close_newProduct_window.serviceEvent(this);
 			newProductFrame.dispose();
 		}
 	}
 
 	private void jButton_closeActionPerformed(java.awt.event.ActionEvent evt)
 	{
+		oe_close_newProduct_window.serviceEvent(this);
 		newProductFrame.dispose();
 	}
 
