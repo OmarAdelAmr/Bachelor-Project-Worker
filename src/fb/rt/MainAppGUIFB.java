@@ -10,6 +10,8 @@ import fb.datatype.WSTRING;
 
 public class MainAppGUIFB extends FBInstance
 {
+	// WorkerAgent fake_agent = new WorkerAgent();
+
 	// GUI Variables
 	private JFrame mainAppFrame = new JFrame();
 	private javax.swing.JButton jButton_execute;
@@ -39,6 +41,7 @@ public class MainAppGUIFB extends FBInstance
 	public MainAppGUIFB()
 	{
 		super();
+		// fake_agent.start();
 
 	}
 
@@ -209,8 +212,9 @@ public class MainAppGUIFB extends FBInstance
 	private void jButton_executeActionPerformed(java.awt.event.ActionEvent evt)
 	{
 		ov_product_name.value = jComboBox_products.getSelectedItem().toString();
+		mainAppFrame.setVisible(false);
 		oe_execute_product.serviceEvent(this);
-		mainAppFrame.dispose();
+
 	}
 
 	private static String read_all_products()

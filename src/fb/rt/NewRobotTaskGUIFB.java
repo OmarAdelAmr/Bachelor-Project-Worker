@@ -16,6 +16,7 @@ import fb.datatype.WSTRING;
 
 public class NewRobotTaskGUIFB extends FBInstance
 {
+	// private static WorkerAgent new_robot_task_agent = new WorkerAgent();
 
 	// CHECK VARS
 	private boolean start_recorder = false;
@@ -37,16 +38,16 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private javax.swing.JTextField task_name;
 	// End of GUI variables declaration
 
-	// INPUT VARIABLES
-	public WSTRING iv_new_task_name = new WSTRING(); // INPUT
-	public WSTRING iv_selected_arm = new WSTRING(); // INPUT
-	// END OF INPUT VARIABLES
-
 	// INPUT EVENTS
 	public EventServer ie_init_new_task = new EventInput(this);
 	public EventServer ie_start_stop_recording = new EventInput(this);
 	public EventServer ie_close_newTask_window = new EventInput(this);
 	// END OF INPUT EVENTS
+
+	// INPUT VARIABLES
+	public WSTRING iv_new_task_name = new WSTRING(); // INPUT
+	public WSTRING iv_selected_arm = new WSTRING(); // INPUT
+	// END OF INPUT VARIABLES
 
 	// OUTPUT VARIABLES
 	public WSTRING ov_new_task_name = new WSTRING();
@@ -62,6 +63,15 @@ public class NewRobotTaskGUIFB extends FBInstance
 	public NewRobotTaskGUIFB()
 	{
 		super();
+		// TODO
+		// Thread one = new Thread()
+		// {
+		// public void run()
+		// {
+		// new_robot_task_agent.start();
+		// }
+		// };
+		// one.start();
 
 	}
 
@@ -159,7 +169,10 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private void service_ie_start_stop_recording()
 	{
 		ov_new_task_name.value = iv_new_task_name.value;
-		oe_start_stop_recording.serviceEvent(this);
+		// TODO
+		// new_robot_task_agent.send_inform_message("new_task",
+		// ov_new_task_name.value);
+		// oe_start_stop_recording.serviceEvent(this);
 
 	}
 
