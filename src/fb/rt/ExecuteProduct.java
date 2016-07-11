@@ -18,15 +18,15 @@ import javax.swing.JFrame;
 import fb.components.HumanTask;
 import fb.components.RobotTask;
 import fb.components.Task;
-import fb.datatype.ANY;
-import fb.datatype.WSTRING;
-import fb.mas.WorkerAgent;
+import fb.mas.ExecuteAgent;
+import fb.mas.MainAgent;
 
-public class ExecuteProduct extends FBInstance
+public class ExecuteProduct
 {
 
+	private String product_name;
 	private ArrayList<Task> product_tasks_arr = new ArrayList<Task>();
-	private static WorkerAgent execute_agent = new WorkerAgent();
+	private static MainAgent execute_agent = new ExecuteAgent("ExecuteAgent", 1, "");
 
 	// TCP Client Variables
 	private Socket skt;
@@ -45,95 +45,11 @@ public class ExecuteProduct extends FBInstance
 	private int image_width = 600;
 	// End of GUI Variables
 
-	// INPUT EVENTS
-	public EventServer ie_init_execute_product = new EventInput(this);
-	// END OF INPUT EVENTS
-
-	// INPUT VARIABLES
-	public WSTRING iv_product_name = new WSTRING(); // INPUT
-	// END OF INPUT VARIABLES
-
-	// OUTPUT EVENTS
-	public EventOutput oe_close_execute_product_frame = new EventOutput();
-	// END OF OUTPUT EVENTS
-
-	public ExecuteProduct() throws IOException
+	public ExecuteProduct(String product_name)
 	{
-		super();
-		Thread one = new Thread()
-		{
-			public void run()
-			{
-				execute_agent.start();
-			}
-		};
-		one.start();
+		execute_agent.start();
+		this.product_name = product_name;
 		initComponents();
-		iv_product_name.value = "";
-
-	}
-
-	/** LINKING INPUT EVENTS TO THEIR NAMES */
-	public EventServer eiNamed(String s)
-	{
-		if ("ie_init_execute_product".equals(s))
-			return ie_init_execute_product;
-		return super.eiNamed(s);
-	}
-
-	/** LINKING OUTPUT EVENTS TO THEIR NAMES */
-	public EventOutput eoNamed(String s)
-	{
-		if ("oe_close_execute_product_frame".equals(s))
-			return oe_close_execute_product_frame;
-		return super.eoNamed(s);
-	}
-
-	/** LINKING INPUT VARIABLES TO THEIR NAMES */
-	public ANY ivNamed(String s) throws FBRManagementException
-	{
-		if ("iv_product_name".equals(s))
-			return iv_product_name;
-		return super.ivNamed(s);
-	}
-
-	/** LINKING INPUT VARIABLES TO THEIR VALUES */
-	public void connectIV(String ivName, ANY newIV) throws FBRManagementException
-	{
-		if ("iv_product_name".equals(ivName))
-		{
-			connect_iv_product_name((WSTRING) newIV);
-			return;
-		}
-		super.connectIV(ivName, newIV);
-	}
-
-	private void connect_iv_product_name(WSTRING newIV)
-	{
-		iv_product_name = newIV;
-	}
-
-	/** Defining the Methods */
-	public void serviceEvent(EventServer e)
-	{
-		if (e == ie_init_execute_product)
-			try
-			{
-				service_ie_init_execute_product();
-			} catch (IOException e1)
-			{
-				e1.printStackTrace();
-			}
-	}
-
-	private void service_ie_init_execute_product() throws IOException
-	{
-		// TODO
-		iv_product_name.value = "Product 1";
-
-		TCP_open_connection(true);
-		execute_order();
-
 	}
 
 	///////////////////////////////// GUI /////////////////////////////////
@@ -151,17 +67,19 @@ public class ExecuteProduct extends FBInstance
 				.addComponent(image_label, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE));
 
 		execute_product_frame.setSize(image_hight, image_width);
+
 	}
 
 	////////////////////////////// Helper Methods //////////////////////////////
 	public void execute_order() throws IOException
 	{
-		execute_product_frame.setVisible(true);
+
 		last_gesture = "";
 		last_gesture_counter = 0;
-		String product_name = iv_product_name.value;
 		if (!product_name.matches("\\s*"))
 		{
+			execute_product_frame.setVisible(true);
+			TCP_open_connection(true);
 			product_tasks_arr = new ArrayList<Task>(read_product_tasks(product_name));
 			// TODO Add dependencies
 			for (int i = 0; i < product_tasks_arr.size(); i++)
@@ -170,10 +88,11 @@ public class ExecuteProduct extends FBInstance
 				create_image(i);
 				if (temp_task instanceof RobotTask)
 				{
-					execute_agent.send_inform_message("execute_task", temp_task.getName());
-
+					execute_agent.send_inform_message("dd", temp_task.getName());
+					System.out.println(temp_task.getName());
 					try
 					{
+
 						Thread.sleep(((RobotTask) temp_task).getTask_time() + 10000);
 					} catch (InterruptedException ex)
 					{
@@ -181,6 +100,7 @@ public class ExecuteProduct extends FBInstance
 					}
 				} else if (temp_task instanceof HumanTask)
 				{
+					System.out.println(temp_task.getName());
 					read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
 				}
 				if (i == product_tasks_arr.size() - 1)
@@ -188,20 +108,10 @@ public class ExecuteProduct extends FBInstance
 					create_image(product_tasks_arr.size());
 				}
 			}
-
 			TCP_open_connection(false);
-			try
-			{
-				Thread.sleep(3000);
-			} catch (InterruptedException ex)
-			{
-				Thread.currentThread().interrupt();
-			}
+			execute_product_frame.setVisible(false);
 
 		}
-		execute_product_frame.setVisible(false);
-		System.out.println("HEREEEEEEE");
-		oe_close_execute_product_frame.serviceEvent(this);
 
 	}
 
@@ -212,6 +122,7 @@ public class ExecuteProduct extends FBInstance
 		ArrayList<Task> result = new ArrayList<Task>();
 		try
 		{
+			System.out.println(path);
 			br = new BufferedReader(new FileReader(path));
 			String currentLine = "";
 
@@ -234,7 +145,7 @@ public class ExecuteProduct extends FBInstance
 			return result;
 		} catch (IOException e)
 		{
-			System.out.println("Execute Product Class: *read_product_tasks* Method");
+			e.printStackTrace();
 			return result;
 		}
 	}
@@ -356,9 +267,19 @@ public class ExecuteProduct extends FBInstance
 		execute_order();
 	}
 
+	public String getProduct_name()
+	{
+		return product_name;
+	}
+
+	public void setProduct_name(String product_name)
+	{
+		this.product_name = product_name;
+	}
+
 	public static void main(String[] args) throws IOException
 	{
-		new ExecuteProduct();
+
 	}
 
 }

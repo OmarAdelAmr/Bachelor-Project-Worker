@@ -5,12 +5,11 @@ import java.io.FilenameFilter;
 
 import javax.swing.JFrame;
 
-import fb.datatype.ANY;
-import fb.datatype.WSTRING;
+import fb.mas.MainAgent;
 
 public class MainAppGUIFB extends FBInstance
 {
-	// WorkerAgent fake_agent = new WorkerAgent();
+	private static MainAgent MainAppAgent = new MainAgent("MainAppAgent", 0, "ExecuteAgentLocal");
 
 	// GUI Variables
 	private JFrame mainAppFrame = new JFrame();
@@ -31,17 +30,12 @@ public class MainAppGUIFB extends FBInstance
 	public EventOutput oe_init_new_robot_task = new EventOutput();
 	public EventOutput oe_init_new_human_task = new EventOutput();
 	public EventOutput oe_init_new_product = new EventOutput();
-	public EventOutput oe_execute_product = new EventOutput();
 	// END OF OUTPUT EVENTS
-
-	// OUTPUT VARIABLES
-	public WSTRING ov_product_name = new WSTRING(); // OUTPUT
-	// END OF OUTPUT VARIABLES
 
 	public MainAppGUIFB()
 	{
 		super();
-		// fake_agent.start();
+		MainAppAgent.start();
 
 	}
 
@@ -64,17 +58,7 @@ public class MainAppGUIFB extends FBInstance
 			return oe_init_new_human_task;
 		if ("oe_init_new_product".equals(s))
 			return oe_init_new_product;
-		if ("oe_execute_product".equals(s))
-			return oe_execute_product;
 		return super.eoNamed(s);
-	}
-
-	// LINKING OUTPUT VARIABLES TO THEIR NAMES
-	public ANY ovNamed(String s) throws FBRManagementException
-	{
-		if ("ov_product_name".equals(s))
-			return ov_product_name;
-		return super.ovNamed(s);
 	}
 
 	/** Defining the Methods */
@@ -211,9 +195,7 @@ public class MainAppGUIFB extends FBInstance
 
 	private void jButton_executeActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		ov_product_name.value = jComboBox_products.getSelectedItem().toString();
-		mainAppFrame.setVisible(false);
-		oe_execute_product.serviceEvent(this);
+		MainAppAgent.send_inform_message("Execute", jComboBox_products.getSelectedItem().toString());
 
 	}
 
