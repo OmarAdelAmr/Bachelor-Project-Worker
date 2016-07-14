@@ -21,7 +21,7 @@ import fb.components.Task;
 import fb.mas.ExecuteAgent;
 import fb.mas.MainAgent;
 
-public class ExecuteProduct
+public class ExecuteProduct2
 {
 
 	private String product_name;
@@ -29,7 +29,6 @@ public class ExecuteProduct
 	private static MainAgent execute_agent = new ExecuteAgent("ExecuteAgent", 1, "Baxter-Execute");
 	private static MainAgent image_agent = new ExecuteAgent("ImageAgent", 1, "Baxter-Image");
 	private String image_details = "";
-	private boolean connection_is_open = false;
 	// TCP Client Variables
 	private Socket skt;
 	private int socket_port = 10016;
@@ -47,7 +46,7 @@ public class ExecuteProduct
 	private int image_width = 600;
 	// End of GUI Variables
 
-	public ExecuteProduct(String product_name)
+	public ExecuteProduct2(String product_name)
 	{
 		execute_agent.start();
 		image_agent.start();
@@ -83,7 +82,7 @@ public class ExecuteProduct
 		if (!product_name.matches("\\s*"))
 		{
 			execute_product_frame.setVisible(true);
-
+			TCP_open_connection(true);
 			product_tasks_arr = new ArrayList<Task>(read_product_tasks(product_name));
 			// TODO Add dependencies
 			for (int i = 0; i < product_tasks_arr.size(); i++)
@@ -92,11 +91,6 @@ public class ExecuteProduct
 				create_image(i);
 				if (temp_task instanceof RobotTask)
 				{
-					if (connection_is_open)
-					{
-						TCP_open_connection(false);
-						connection_is_open = false;
-					}
 					execute_agent.send_inform_message("execute_task", temp_task.getName());
 					System.out.println(temp_task.getName());
 					try
@@ -109,11 +103,6 @@ public class ExecuteProduct
 					}
 				} else if (temp_task instanceof HumanTask)
 				{
-					if (!connection_is_open)
-					{
-						TCP_open_connection(true);
-						connection_is_open = true;
-					}
 					System.out.println(temp_task.getName());
 					read_from_leap(((HumanTask) temp_task).getAssociated_gesture());
 				}
@@ -122,6 +111,7 @@ public class ExecuteProduct
 					create_image(product_tasks_arr.size());
 				}
 			}
+			TCP_open_connection(false);
 			execute_product_frame.setVisible(false);
 
 		}
@@ -217,36 +207,22 @@ public class ExecuteProduct
 	{
 		BufferedReader in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
 		System.out.println(required_gesture);
-
-		String[] gestures_arr;
-		if (required_gesture.equals("Pick and Place"))
+		last_gesture = "";
+		last_gesture_counter = 0;
+		while (true)
 		{
-			gestures_arr = required_gesture.split(" ");
-		} else
-		{
-			gestures_arr = new String[] { required_gesture };
-		}
-		for (int i = 0; i < gestures_arr.length; i++)
-		{
-			last_gesture = "";
-			last_gesture_counter = 0;
-			while (true)
+			// Message from client
+			if ((last_gesture = in.readLine()) != null)
 			{
-				// Message from client
-				if ((last_gesture = in.readLine()) != null)
+				if (last_gesture.equals(required_gesture))
 				{
-					System.out.println(">>>>>>>" + last_gesture);
-					System.out.println("=======" + gestures_arr[i]);
-					if (last_gesture.equals(gestures_arr[i]))
+					last_gesture_counter++;
+					System.out.println(last_gesture_counter);
+					if (last_gesture_counter == 50)
 					{
-						last_gesture_counter++;
-						System.out.println(last_gesture + ": " + last_gesture_counter);
-						if (last_gesture_counter == 20)
-						{
-							break;
-						}
-
+						break;
 					}
+
 				}
 			}
 		}

@@ -22,7 +22,7 @@ public class MainAgent extends Agent
 			this.DestinationServerAddress = "http://172.0.0.1:7777/acc";
 		} else
 		{
-			this.DestinationServerID = new AID("Baxter@BaxterPlatform", AID.ISGUID);
+			this.DestinationServerID = new AID(DestinationAgentName + "@BaxterPlatform", AID.ISGUID);
 			this.DestinationServerAddress = "http://192.168.12.160:7778/acc";
 		}
 		this.AgentName = AgentName;
@@ -40,10 +40,10 @@ public class MainAgent extends Agent
 		}
 	}
 
-	// protected void setup()
-	// {
-	//
-	// }
+	protected void setup()
+	{
+
+	}
 
 	public void send_inform_message(String conversationID, String message_content)
 	{

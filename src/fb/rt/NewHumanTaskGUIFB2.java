@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class NewHumanTaskGUIFB extends FBInstance
+public class NewHumanTaskGUIFB2 extends FBInstance
 {
 
 	// GUI Variables
@@ -37,7 +37,7 @@ public class NewHumanTaskGUIFB extends FBInstance
 	public EventOutput oe_close_new_human_task_window = new EventOutput();
 	// END OF OUTPUT EVENTS
 
-	public NewHumanTaskGUIFB()
+	public NewHumanTaskGUIFB2()
 	{
 		super();
 	}
@@ -119,8 +119,9 @@ public class NewHumanTaskGUIFB extends FBInstance
 
 		jLabel_choose_gesture.setText("Choose Gesture:");
 
-		jComboBox_gestures.setModel(
-				new javax.swing.DefaultComboBoxModel<>(new String[] { "Pick and Place", "Right Hand,Back", "Tool" }));
+		jComboBox_gestures.setModel(new javax.swing.DefaultComboBoxModel<>(
+				new String[] { "Right Hand,Back", "Right Hand,Front", "Left Hand,Back", "Left Hand,Front", "Tool",
+						"Swipe Right", "Swipe Left", "Screentab", "Keytab" }));
 		jComboBox_gestures.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -318,7 +319,7 @@ public class NewHumanTaskGUIFB extends FBInstance
 
 	public static void main(String[] args)
 	{
-		new NewHumanTaskGUIFB();
+		new NewHumanTaskGUIFB2();
 	}
 
 }

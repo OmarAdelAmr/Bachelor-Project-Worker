@@ -107,6 +107,7 @@ public class NewProductGUIFB extends FBInstance
 	{
 		robot_tasks = read_all_tasks("Robot_tasks");
 		worker_tasks = read_all_tasks("Human_tasks");
+		all_selected_tasks = new ArrayList<Task>();
 		initComponents();
 	}
 

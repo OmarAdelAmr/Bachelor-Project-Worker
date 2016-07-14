@@ -8,15 +8,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
 import javax.swing.JFrame;
-
 import fb.datatype.ANY;
 import fb.datatype.WSTRING;
+import fb.mas.MainAgent;
 
 public class NewRobotTaskGUIFB extends FBInstance
 {
-	// private static WorkerAgent new_robot_task_agent = new WorkerAgent();
+	private static MainAgent RobotTaskAgent = new MainAgent("RobotTask", 1, "Baxter-Teach");
 
 	// CHECK VARS
 	private boolean start_recorder = false;
@@ -63,15 +62,7 @@ public class NewRobotTaskGUIFB extends FBInstance
 	public NewRobotTaskGUIFB()
 	{
 		super();
-		// TODO
-		// Thread one = new Thread()
-		// {
-		// public void run()
-		// {
-		// new_robot_task_agent.start();
-		// }
-		// };
-		// one.start();
+		RobotTaskAgent.start();
 
 	}
 
@@ -169,10 +160,8 @@ public class NewRobotTaskGUIFB extends FBInstance
 	private void service_ie_start_stop_recording()
 	{
 		ov_new_task_name.value = iv_new_task_name.value;
-		// TODO
-		// new_robot_task_agent.send_inform_message("new_task",
-		// ov_new_task_name.value);
-		// oe_start_stop_recording.serviceEvent(this);
+		RobotTaskAgent.send_inform_message("teach_task", ov_new_task_name.value);
+		oe_start_stop_recording.serviceEvent(this);
 
 	}
 
