@@ -119,8 +119,8 @@ public class NewHumanTaskGUIFB extends FBInstance
 
 		jLabel_choose_gesture.setText("Choose Gesture:");
 
-		jComboBox_gestures.setModel(
-				new javax.swing.DefaultComboBoxModel<>(new String[] { "Pick and Place", "Right Hand,Back", "Tool" }));
+		jComboBox_gestures.setModel(new javax.swing.DefaultComboBoxModel<>(
+				new String[] { "Pick and Place", "Swipe Right", "Right Hand,Back", "Tool" }));
 		jComboBox_gestures.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
